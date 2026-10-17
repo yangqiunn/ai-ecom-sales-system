@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>智能云商城 - AI电商在线销售系统</title>
+<style>
+:root{--p:#2563eb;--p2:#1e40af;--bg:#f1f5f9;--txt:#0f172a;--muted:#64748b;--ok:#16a34a;--danger:#dc2626;--card:#fff;--radius:12px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--txt)}
+header{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;padding:14px 24px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:50;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+header h1{font-size:20px}
+header .sp{flex:1}
+header .user{font-size:14px;opacity:.9}
+button{cursor:pointer;border:none;border-radius:8px;font-size:14px;padding:8px 16px;transition:.15s}
+.btn-out{background:rgba(255,255,255,.2);color:#fff}
+.btn-out:hover{background:rgba(255,255,255,.35)}
+.btn-p{background:var(--p);color:#fff}
+.btn-p:hover{background:var(--p2)}
+.cart-btn{background:#fbbf24;color:#78350f;font-weight:600;position:relative}
+.cart-btn .badge{position:absolute;top:-8px;right:-8px;background:var(--danger);color:#fff;border-radius:50%;min-width:20px;height:20px;line-height:20px;font-size:12px;text-align:center}
+main{max-width:1100px;margin:24px auto;padding:0 16px}
+.hero{background:linear-gradient(120deg,#1e3a8a,#2563eb 60%,#3b82f6);color:#fff;border-radius:var(--radius);padding:32px;margin-bottom:24px}
+.hero h2{font-size:26px;margin-bottom:8px}
+.hero p{opacity:.9}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.card{background:var(--card);border-radius:var(--radius);overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08);transition:.2s;display:flex;flex-direction:column}
+.card:hover{transform:translateY(-3px);box-shadow:0 6px 16px rgba(0,0,0,.12)}
+.card .img{height:140px;display:flex;align-items:center;justify-content:center;font-size:52px;background:linear-gradient(135deg,#e0e7ff,#ede9fe)}
+.card .body{padding:14px;flex:1;display:flex;flex-direction:column;gap:6px}
+.card .name{font-weight:600;font-size:15px}
+.card .desc{font-size:12px;color:var(--muted);flex:1}
+.card .price{color:var(--danger);font-size:18px;font-weight:700}
+.card .price small{color:var(--muted);font-weight:400;font-size:12px;text-decoration:line-through;margin-left:6px}
+.card .row{display:flex;justify-content:space-between;align-items:center}
+.tag{font-size:11px;background:#dbeafe;color:var(--p2);padding:2px 8px;border-radius:10px;align-self:flex-start}
+/* 登录 */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1e293b,#2563eb)}
+.login{background:#fff;border-radius:16px;padding:36px;width:360px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.login h2{text-align:center;margin-bottom:6px}
+.login .sub{text-align:center;color:var(--muted);font-size:13px;margin-bottom:22px}
+.login label{font-size:13px;color:var(--muted);display:block;margin:12px 0 4px}
+.login input{width:100%;padding:11px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;outline:none}
+.login input:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+.login .btn{width:100%;margin-top:20px;padding:12px;font-size:15px}
+.login .err{color:var(--danger);font-size:13px;margin-top:10px;text-align:center;min-height:18px}
+.login .hint{margin-top:14px;font-size:12px;color:var(--muted);text-align:center;background:#f8fafc;border-radius:8px;padding:8px}
+/* 弹层 */
+.mask{position:fixed;inset:0;background:rgba(15,23,42,.5);display:none;align-items:center;justify-content:center;z-index:100}
+.mask.show{display:flex}
+.panel{background:#fff;border-radius:14px;width:420px;max-width:92vw;max-height:80vh;display:flex;flex-direction:column}
+.panel .hd{padding:16px 20px;border-bottom:1px solid #e2e8f0;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.panel .hd .x{cursor:pointer;color:var(--muted);font-size:20px;line-height:1}
+.panel .bd{padding:16px 20px;overflow:auto;flex:1}
+.panel .ft{padding:14px 20px;border-top:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center}
+.citem{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px dashed #e2e8f0}
+.citem .ci-img{width:48px;height:48px;border-radius:8px;background:#eef2ff;display:flex;align-items:center;justify-content:center;font-size:24px}
+.citem .ci-body{flex:1}
+.citem .ci-name{font-size:14px;font-weight:600}
+.citem .ci-price{color:var(--danger);font-size:13px}
+.qty{display:flex;align-items:center;gap:8px}
+.qty button{width:24px;height:24px;padding:0;border-radius:6px;background:#e2e8f0;font-weight:700}
+.empty{text-align:center;color:var(--muted);padding:30px 0}
+.order-ok{text-align:center;padding:20px 0}
+.order-ok .big{font-size:48px}
+.order-ok h3{margin:10px 0 4px}
+.toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 20px;border-radius:20px;font-size:14px;display:none;z-index:200}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:24px;margin-top:30px}
+.stat{display:flex;gap:16px;margin-top:16px}
+.stat .s{flex:1;background:rgba(255,255,255,.15);border-radius:10px;padding:12px 16px}
+.stat .s b{font-size:22px;display:block}
+.stat .s span{font-size:12px;opacity:.85}
+</style>
+</head>
+<body>
+
+<!-- 登录页 -->
+<div id="page-login" class="login-wrap">
+  <div class="login">
+    <h2>🛒 智能云商城</h2>
+    <p class="sub">AI 电商在线销售系统 · 请登录</p>
+    <label>用户名</label>
+    <input id="lu" placeholder="请输入用户名" autocomplete="off">
+    <label>密码</label>
+    <input id="lp" type="password" placeholder="请输入密码">
+    <div class="err" id="lerr"></div>
+    <button class="btn btn-p" onclick="doLogin()">登 录</button>
+    <div class="hint">测试账号：admin ｜ 密码：admin123</div>
+  </div>
+</div>
+
+<!-- 商城主页 -->
+<div id="page-main" style="display:none">
+<header>
+  <h1>🛒 智能云商城</h1>
+  <span class="tag" style="background:rgba(255,255,255,.2);color:#fff">AI 电商在线销售系统</span>
+  <div class="sp"></div>
+  <span class="user" id="whoami"></span>
+  <button class="cart-btn" onclick="openCart()">🛍 购物车<span class="badge" id="cartN">0</span></button>
+  <button class="btn-out" onclick="logout()">退出</button>
+</header>
+<main>
+  <div class="hero">
+    <h2>智能好物，一站购齐</h2>
+    <p>精选 AI 数码好物与生活潮品 · 全场包邮 · 7 天无理由退换</p>
+    <div class="stat">
+      <div class="s"><b id="stP">0</b><span>在售商品</span></div>
+      <div class="s"><b id="stO">0</b><span>累计订单</span></div>
+      <div class="s"><b>24h</b><span>极速发货</span></div>
+    </div>
+  </div>
+  <div class="grid" id="grid"></div>
+</main>
+<footer>智能云AI电商在线销售系统 · 静态站点演示 © 2026</footer>
+</div>
+
+<!-- 购物车弹层 -->
+<div class="mask" id="cartMask">
+  <div class="panel">
+    <div class="hd">🛍 我的购物车 <span class="x" onclick="closeCart()">×</span></div>
+    <div class="bd" id="cartBody"></div>
+    <div class="ft">
+      <div>合计：<span style="color:var(--danger);font-size:20px;font-weight:700" id="cartTotal">¥0.00</span></div>
+      <button class="btn btn-p" onclick="checkout()">提交订单</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const USER={name:"admin",pwd:"admin123"};
+const PRODUCTS=[
+ {id:1,ico:"🤖",name:"智能云 AI 音箱 Pro",desc:"语音助手 / 智能家居中枢 / 环绕音效",price:399,old:499,tag:"热卖"},
+ {id:2,ico:"🎧",name:"无线降噪耳机 X2",desc:"主动降噪 / 40h 续航 / 蓝牙 5.3",price:299,old:399,tag:"新品"},
+ {id:3,ico:"⌚",name:"AI 健康手表 S8",desc:"心率血氧监测 / AI 运动指导 / 14 天续航",price:549,old:699,tag:"热卖"},
+ {id:4,ico:"📷",name:"智能云台摄像机 C3",desc:"2K 高清 / AI 人形追踪 / 云端存储",price:229,old:299,tag:"促销"},
+ {id:5,ico:"💡",name:"智控氛围灯套装",desc:"1600 万色 / 语音控制 / 场景联动",price:129,old:169,tag:"促销"},
+ {id:6,ico:"🔌",name:"智能插排升级款",desc:"分控开关 / 电量统计 / 远程控制",price:69,old:99,tag:"热卖"},
+ {id:7,ico:"🧹",name:"扫地机器人 T9",desc:"激光导航 / 自动集尘 / 拖扫一体",price:1599,old:1999,tag:"爆款"},
+ {id:8,ico:"🖥️",name:"AI 学习平板 11″",desc:"护眼屏 / AI 批改作业 / 家长管控",price:1899,old:2299,tag:"新品"},
+];
+let cart=JSON.parse(localStorage.getItem("cart")||"{}");
+const orders=()=>JSON.parse(localStorage.getItem("orders")||"[]");
+
+function $(id){return document.getElementById(id)}
+function toast(t){const el=$("toast");el.textContent=t;el.style.display="block";setTimeout(()=>el.style.display="none",1600)}
+function saveCart(){localStorage.setItem("cart",JSON.stringify(cart));renderCartN()}
+
+/* 登录 */
+function doLogin(){
+  const u=$("lu").value.trim(),p=$("lp").value;
+  if(u===USER.name&&p===USER.pwd){
+    sessionStorage.setItem("login","1");sessionStorage.setItem("uname",u);
+    enterMain();
+  }else{$("lerr").textContent="用户名或密码错误，请重试";}
+}
+$("lp").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin()});
+function logout(){sessionStorage.clear();$("page-main").style.display="none";$("page-login").style.display="flex"}
+function enterMain(){
+  $("page-login").style.display="none";$("page-main").style.display="block";
+  $("whoami").textContent="👤 "+sessionStorage.getItem("uname");
+  renderGrid();renderCartN();renderStat();
+}
+
+/* 商品 */
+function renderGrid(){
+  $("grid").innerHTML=PRODUCTS.map(p=>`
+   <div class="card">
+     <div class="img">${p.ico}</div>
+     <div class="body">
+       <span class="tag">${p.tag}</span>
+       <div class="name">${p.name}</div>
+       <div class="desc">${p.desc}</div>
+       <div class="price">¥${p.price}<small>¥${p.old}</small></div>
+       <div class="row">
+         <span style="font-size:12px;color:var(--muted)">已售 ${100+((p.id*137)%900)}</span>
+         <button class="btn btn-p" onclick="addCart(${p.id})">加入购物车</button>
+       </div>
+     </div>
+   </div>`).join("");
+  $("stP").textContent=PRODUCTS.length;
+}
+function renderStat(){$("stO").textContent=orders().length}
+
+/* 购物车 */
+function addCart(id){cart[id]=(cart[id]||0)+1;saveCart();toast("已加入购物车 ✓")}
+function chg(id,d){cart[id]=(cart[id]||0)+d;if(cart[id]<=0)delete cart[id];saveCart();renderCart()}
+function cartN(){return Object.values(cart).reduce((a,b)=>a+b,0)}
+function renderCartN(){$("cartN").textContent=cartN()}
+function renderCart(){
+  const ids=Object.keys(cart);
+  if(!ids.length){$("cartBody").innerHTML='<div class="empty">购物车空空如也，去逛逛吧～</div>';$("cartTotal").textContent="¥0.00";return}
+  let total=0;
+  $("cartBody").innerHTML=ids.map(id=>{
+    const p=PRODUCTS.find(x=>x.id==id),n=cart[id],sub=p.price*n;total+=sub;
+    return `<div class="citem">
+      <div class="ci-img">${p.ico}</div>
+      <div class="ci-body"><div class="ci-name">${p.name}</div><div class="ci-price">¥${p.price} × ${n} = ¥${sub.toFixed(2)}</div></div>
+      <div class="qty"><button onclick="chg(${id},-1)">−</button><b>${n}</b><button onclick="chg(${id},1)">＋</button></div>
+    </div>`}).join("");
+  $("cartTotal").textContent="¥"+total.toFixed(2);
+}
+function openCart(){renderCart();$("cartMask").classList.add("show")}
+function closeCart(){$("cartMask").classList.remove("show")}
+function checkout(){
+  if(!cartN()){toast("购物车是空的哦");return}
+  const total=Object.keys(cart).reduce((s,id)=>{const p=PRODUCTS.find(x=>x.id==id);return s+p.price*cart[id]},0);
+  const list=Object.keys(cart).map(id=>{const p=PRODUCTS.find(x=>x.id==id);return p.name+"×"+cart[id]});
+  const os=orders();os.push({no:"SO"+Date.now(),items:list,total:total.toFixed(2),user:sessionStorage.getItem("uname"),time:new Date().toLocaleString()});
+  localStorage.setItem("orders",JSON.stringify(os));
+  cart={};saveCart();renderStat();
+  $("cartBody").innerHTML=`<div class="order-ok"><div class="big">✅</div><h3>下单成功！</h3>
+    <p style="color:var(--muted);font-size:13px">订单号：${os[os.length-1].no}</p>
+    <p style="color:var(--muted);font-size:13px">应付金额：¥${total.toFixed(2)}（演示环境，无需支付）</p></div>`;
+  $("cartTotal").textContent="¥0.00";
+}
+
+/* 启动：会话内免登录 */
+if(sessionStorage.getItem("login")==="1")enterMain();
+</script>
+</body>
+</html>
